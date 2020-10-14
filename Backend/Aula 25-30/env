@@ -1,0 +1,5 @@
+DB_HOST=ec2-3-95-87-221.compute-1.amazonaws.com
+DB_USER=hwwadgslezvlcl
+DB_PW=7800f942d053ff269f5253edd920aff059d1ecd0a81a263cae3af76c8137b2f4
+DB_NAME=d405366rg5h0ht
+DB_PORT=5432
