@@ -22,7 +22,6 @@ const drop = async (table) => {
 		await database.query(`DROP TABLE ${table}`);
 	}
 };
-
 const up = async (number = null) => {
 	if (number) {
 		await database.query({ text: schema[number] });
@@ -34,4 +33,6 @@ const up = async (number = null) => {
 };
 
 // drop('classificacao');
-up();
+// up();
+
+module.exports = { drop, up };

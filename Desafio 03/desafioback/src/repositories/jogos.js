@@ -48,7 +48,28 @@ const classificar = async (partidas) => {
 	return mostrarClassificacao();
 };
 
+const listarRodada = async (id) => {
+	const query = `SELECT * FROM jogos WHERE rodada = $1`;
+	const result = await database.query({
+		text: query,
+		values: [id],
+	});
+	return result.rows;
+};
+
+const atualizarJogos = async (id, golsCasa, golsVisitante) => {
+	const query = {
+		text: `UPDATE jogos SET gols_casa = $1, gols_visitante = $2 WHERE id = $3 RETURNING *`,
+		values: [golsCasa, golsVisitante, id],
+	};
+	const result = await database.query(query);
+	return result.rows;
+};
+
 module.exports = {
+	atualizarJogos,
 	mostrarJogos,
 	classificar,
+	listarRodada,
+	mostrarClassificacao,
 };

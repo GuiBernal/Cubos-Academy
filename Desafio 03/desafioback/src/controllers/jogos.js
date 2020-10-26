@@ -1,7 +1,8 @@
 const response = require('./response');
 const Jogos = require('../repositories/jogos');
+const schema = require('../utils/schema');
 
-const classificar = async () => {
+const classificar = async (ctx) => {
 	const table = await Jogos.mostrarJogos();
 
 	const times = table.map((x) => x.time_casa);
@@ -56,10 +57,46 @@ const classificar = async () => {
 			golsaldo,
 		};
 	});
+	console.log(classificacao.length);
 	const classi = await Jogos.classificar(classificacao);
-	return console.log(classi);
+	console.log(classi.length);
+	return response(ctx, 200, classi);
+};
+
+const listarRodada = async (ctx) => {
+	const { id = null } = ctx.params;
+	if (id) {
+		const result = await Jogos.listarRodada(id);
+		if (result) {
+			return response(ctx, 200, result);
+		}
+		return response(ctx, 404, { mensagem: 'Não encontrado' });
+	}
+	return response(ctx, 400, { mensagem: 'Mal formatado' });
+};
+
+const atualizarJogos = async (ctx) => {
+	const { id, golsCasa, golsVisitante } = ctx.request.body;
+	if (!id && !golsCasa && !golsVisitante) {
+		return response(ctx, 400, { message: 'Pedido mal-formatado' });
+	}
+	const result = await Jogos.atualizarJogos(id, golsCasa, golsVisitante);
+	if (result) {
+		await schema.drop('classificacao');
+		await schema.up();
+		return response(ctx, 400, await classificar());
+	}
+	return response(ctx, 404, { message: 'Não encontrado' });
+};
+
+const mostrarClassificacao = async (ctx) => {
+	const result = await Jogos.mostrarClassificacao();
+	ctx.body = result;
 };
 
 module.exports = {
 	classificar,
+	listarRodada,
+	atualizarJogos,
+	mostrarClassificacao,
 };
